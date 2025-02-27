@@ -2,6 +2,7 @@
   "name": "workspace",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -18,7 +19,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "@buf/safedep_api.connectrpc_es": "^1.6.1-20241117092917-2fd4dbf7c52e.1",
+    "@connectrpc/connect-node": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
