@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@buf/safedep_api.connectrpc_es": "^1.6.1-20241117092917-2fd4dbf7c52e.1",
+    "@connectrpc/connect-node": "^1.6.1",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.1.8",
     "class-variance-authority": "^0.7.1",
@@ -19,9 +21,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss-animate": "^1.0.7",
-    "@buf/safedep_api.connectrpc_es": "^1.6.1-20241117092917-2fd4dbf7c52e.1",
-    "@connectrpc/connect-node": "^1.6.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
