@@ -1,3 +1,9 @@
-export default function Home() {
-  return <div className="text-center my-4">Content</div>;
+import Landing from "@/components/Landing";
+
+import dataSource from "@/data/source";
+
+export default async function Home() {
+  const res = await dataSource();
+
+  return <Landing data={res} />;
 }

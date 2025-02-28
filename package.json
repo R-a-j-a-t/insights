@@ -2,6 +2,7 @@
   "name": "workspace",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -9,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@buf/safedep_api.connectrpc_es": "^1.6.1-20241117092917-2fd4dbf7c52e.1",
+    "@connectrpc/connect-node": "^1.6.1",
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.1.8",
     "class-variance-authority": "^0.7.1",
