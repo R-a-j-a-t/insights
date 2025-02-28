@@ -2,13 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-import Navbar from "./Navbar";
 import Link from "next/link";
+
+import { buttonVariants } from "./ui/button";
+
+import Navbar from "./Navbar";
+import { getHasData } from "@/lib/helpers";
 
 export default function Landing(props) {
   const { data = [] } = props;
 
   const [state, setState] = useState({ data: [] });
+
+  const hasData = getHasData(state.data);
 
   const handleSetState = (key, value) =>
     setState((prev) => ({ ...prev, [key]: value }));
@@ -18,29 +24,23 @@ export default function Landing(props) {
   }, [data]);
 
   return (
-    <>
-      <div className="flex flex-col gap-4 bg-white min-h-screen">
-        <Navbar />
+    <div className="flex flex-col gap-4 bg-white min-h-screen">
+      <Navbar />
 
-        <main className="px-4">
-          <h1 className="text-center font-semibold">Welcome</h1>
-          <p>Here's a list of packages to explore!</p>
-          {state.data.length > 0 && (
-            <ol>
-              {state.data.map((e, i) => (
-                <li key={i}>
-                  <Link href={"/package/" + e.packageVersion.package.name}>
-                    {e.packageVersion.package.name}
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          )}
-        </main>
-      </div>
-      <div id="dependency" className="mt-[400px]">
-        Route Success!
-      </div>
-    </>
+      <main className="px-4">
+        <h1 className="text-center font-semibold">Welcome</h1>
+        <p className="my-2">Here's a list of packages to explore!</p>
+        {hasData &&
+          state.data.map((e, i) => (
+            <Link
+              key={i}
+              className={buttonVariants({ variant: "outline", size: "lg" })}
+              href={"/package/" + e.packageVersion.package.name}
+            >
+              {e.packageVersion.package.name}
+            </Link>
+          ))}
+      </main>
+    </div>
   );
 }
