@@ -7,8 +7,13 @@ import { Separator } from "./ui/separator";
 
 import ContentGrid from "@/components/ContentGrid";
 import BackButton from "./BackButton";
+import SummaryTable from "./SummaryTable";
 
-const sectionSeparator = <Separator className="h-2 mt-4 bg-blue-600" />;
+// Local Helper Components
+const SectionSeparator = () => <Separator className="h-2 mt-4 bg-blue-600" />;
+const SectionHeader = ({ children }) => (
+  <h2 className="my-1 underline">{children}</h2>
+);
 
 export default function PackageDetails(props) {
   const { data = [] } = props;
@@ -39,6 +44,51 @@ export default function PackageDetails(props) {
     name: e.package.name,
   }));
 
+  const vulnTableData = currPackage.insight.vulnerabilities.map((e) => ({
+      id: e.id.value,
+      summary: e.summary,
+      rank: e.aliases[0].value,
+      severity: e.severities[0].risk,
+      publishDate: e.publishedAt,
+    })),
+    vlunTableCols = [
+      {
+        accessorKey: "serialNum",
+        header: "Sl. No",
+        cell: ({ row }) => <div>{row.index + 1}</div>,
+      },
+      {
+        accessorKey: "summary",
+        header: "Summary",
+      },
+      {
+        accessorKey: "severity",
+        header: "Severity",
+        cell: ({ row }) => {
+          const type = row.getValue("severity").toLowerCase();
+          let typeVal = "-",
+            styleClass = "";
+
+          if (type.includes("high")) {
+            typeVal = "high";
+            styleClass = "severity-high";
+          } else if (type.includes("medium")) {
+            typeVal = "medium";
+            styleClass = "severity-medium";
+          } else if (type.includes("low")) {
+            typeVal = "low";
+            styleClass = "severity-low";
+          }
+
+          return <div className={styleClass}>{typeVal}</div>;
+        },
+      },
+      {
+        accessorKey: "rank",
+        header: "CVE",
+      },
+    ];
+
   return (
     <div
       className={`flex flex-col gap-2 ${
@@ -50,16 +100,25 @@ export default function PackageDetails(props) {
         <span className="bg-gray-200 p-2 rounded">{packageName}</span>
       </h1>
 
-      {sectionSeparator}
+      <SectionSeparator />
 
       {/* #1. Dependency libs */}
-      <h2 className="my-1 underline">Dependency Libraries</h2>
+      <SectionHeader>Dependency Libraries</SectionHeader>
       <ContentGrid config={contentGridConfig} />
 
-      {sectionSeparator}
+      <SectionSeparator />
 
-      {/* #2. Next Section */}
+      {/* #2. Vulnerability Table */}
+      <SectionHeader>Vulnerability Table</SectionHeader>
+      <SummaryTable
+        data={vulnTableData}
+        columns={vlunTableCols}
+        styleTableClass="vulnerability-table"
+      />
 
+      <SectionSeparator />
+
+      {/* #3. Next Section */}
       <BackButton />
     </div>
   );
