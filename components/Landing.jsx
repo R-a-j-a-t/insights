@@ -29,12 +29,16 @@ export default function Landing(props) {
 
       <main className="px-4">
         <h1 className="text-center font-semibold">Welcome</h1>
-        <p className="my-2">Here's a list of packages to explore!</p>
+        <p className="my-4">Here's a list of packages to explore!</p>
         {hasData &&
           state.data.map((e, i) => (
             <Link
               key={i}
-              className={buttonVariants({ variant: "outline", size: "lg" })}
+              className={buttonVariants({
+                variant: "outline",
+                size: "lg",
+                className: "w-full",
+              })}
               href={"/package/" + e.packageVersion.package.name}
             >
               {e.packageVersion.package.name}
