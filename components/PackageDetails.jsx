@@ -20,9 +20,10 @@ import {
 } from "lucide-react";
 import IconCard from "./IconCard";
 import Link from "next/link";
+import ScrollContent from "./ScrollContent";
 
 // Local Helper Components
-const SectionSeparator = () => <Separator className="h-1 my-2 bg-blue-600" />;
+const SectionSeparator = () => <Separator className="h-1 my-4 bg-blue-600" />;
 const SectionHeader = ({ children }) => (
   <h2 className="my-4 text-2xl underline">{children}</h2>
 );
@@ -53,12 +54,16 @@ export default function PackageDetails(props) {
     return <h1 className="font-2xl text-center">No such package exists!</h1>;
 
   const {
+      packageVersion: { version },
+    } = currPackage,
+    {
       dependencies,
       vulnerabilities,
       projectInsights,
       licenses,
       packagePublishedAt,
       registries,
+      availableVersions,
     } = currPackage.insight,
     currProjectInsights = projectInsights[0];
 
@@ -148,6 +153,15 @@ export default function PackageDetails(props) {
 
   const projDetailsIconSize = "30";
 
+  const scrollConfigData = availableVersions.map((e) => ({
+    name: (
+      <div className="flex justify-between">
+        <div>{"v-" + e.version}</div>
+        <div>{new Date(e.publishedAt).toDateString()}</div>
+      </div>
+    ),
+  }));
+
   return (
     <div
       className={`flex flex-col gap-2 ${
@@ -156,7 +170,9 @@ export default function PackageDetails(props) {
     >
       <h1 className="w-full pt-4 text-center">
         You are viewing details of package:{" "}
-        <span className="bg-gray-200 p-2 rounded">{packageName}</span>
+        <span className="bg-gray-200 p-2 rounded">
+          {packageName} v-{version}
+        </span>
       </h1>
 
       <SectionSeparator />
@@ -189,7 +205,7 @@ export default function PackageDetails(props) {
 
       <SectionSeparator />
 
-      {/* #3. Package Details */}
+      {/* #4. Package Details */}
       <SectionHeader>Package Details</SectionHeader>
       <IconCard
         icon={<Scale size={projDetailsIconSize} />}
@@ -210,6 +226,12 @@ export default function PackageDetails(props) {
         }
         tooltipTitle="Registry"
       />
+
+      <SectionSeparator />
+
+      {/* #5. Available Versions */}
+      <SectionHeader>Available Versions</SectionHeader>
+      <ScrollContent scrollConfig={scrollConfigData} />
 
       <SectionSeparator />
 
