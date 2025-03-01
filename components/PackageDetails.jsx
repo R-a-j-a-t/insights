@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
+import DependenTree from "@square/dependentree";
+
+import Link from "next/link";
 
 import { Separator } from "./ui/separator";
 
@@ -9,6 +12,8 @@ import ContentGrid from "./ContentGrid";
 import BackButton from "./BackButton";
 import SummaryTable from "./SummaryTable";
 import Scorecard from "./Scorecard";
+import IconCard from "./IconCard";
+import ScrollContent from "./ScrollContent";
 
 import {
   BookPlus,
@@ -18,9 +23,8 @@ import {
   Scale,
   Star,
 } from "lucide-react";
-import IconCard from "./IconCard";
-import Link from "next/link";
-import ScrollContent from "./ScrollContent";
+import { dateFormatOptions, treeID } from "@/lib/constants";
+import { getDependencyGraphData } from "@/lib/helpers";
 
 // Local Helper Components
 const SectionSeparator = () => <Separator className="h-1 my-4 bg-blue-600" />;
@@ -28,11 +32,14 @@ const SectionHeader = ({ children }) => (
   <h2 className="my-4 text-2xl underline">{children}</h2>
 );
 
+// const treeID = "tree";
+
 export default function PackageDetails(props) {
   const { data = [] } = props;
 
   const [state, setState] = useState({ display: false });
   const { packageName } = useParams();
+  const treeRef = useRef(null);
 
   const handleSetState = (key, value) =>
     setState((prev) => ({ ...prev, [key]: value }));
@@ -47,6 +54,20 @@ export default function PackageDetails(props) {
         clearTimeout(timerId);
         handleSetState("display", true);
       }, 500);
+
+      try {
+        const graphData = getDependencyGraphData(dependencyGraph);
+
+        if (treeRef?.current) treeRef.current.replaceChildren();
+
+        const tree = new DependenTree("div#" + treeID, {
+          containerWidthInPx: 400,
+        });
+
+        tree.addEntities(graphData);
+
+        tree.setTree(packageName, "downstream");
+      } catch {}
     }
   }, [currPackage]);
 
@@ -64,6 +85,7 @@ export default function PackageDetails(props) {
       packagePublishedAt,
       registries,
       availableVersions,
+      dependencyGraph,
     } = currPackage.insight,
     currProjectInsights = projectInsights[0];
 
@@ -157,7 +179,12 @@ export default function PackageDetails(props) {
     name: (
       <div className="flex justify-between">
         <div>{"v-" + e.version}</div>
-        <div>{new Date(e.publishedAt).toDateString()}</div>
+        <div>
+          {new Date(e.publishedAt.substring(0, 10)).toLocaleDateString(
+            "en-US",
+            dateFormatOptions
+          )}
+        </div>
       </div>
     ),
   }));
@@ -234,6 +261,12 @@ export default function PackageDetails(props) {
       <ScrollContent scrollConfig={scrollConfigData} />
 
       <SectionSeparator />
+
+      {/* #6. Dependency Graph */}
+      <SectionHeader>Dependency Graph</SectionHeader>
+      <div className="w-full min-h-[300px]">
+        <div id={treeID} ref={treeRef}></div>
+      </div>
 
       <BackButton />
     </div>
