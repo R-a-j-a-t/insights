@@ -10,7 +10,16 @@ import BackButton from "./BackButton";
 import SummaryTable from "./SummaryTable";
 import Scorecard from "./Scorecard";
 
-import { CircleDot, GitFork, Star } from "lucide-react";
+import {
+  BookPlus,
+  CircleDot,
+  ClipboardList,
+  GitFork,
+  Scale,
+  Star,
+} from "lucide-react";
+import IconCard from "./IconCard";
+import Link from "next/link";
 
 // Local Helper Components
 const SectionSeparator = () => <Separator className="h-1 my-2 bg-blue-600" />;
@@ -43,11 +52,21 @@ export default function PackageDetails(props) {
   if (!currPackage)
     return <h1 className="font-2xl text-center">No such package exists!</h1>;
 
-  const contentGridConfig = currPackage.insight.dependencies.map((e) => ({
+  const {
+      dependencies,
+      vulnerabilities,
+      projectInsights,
+      licenses,
+      packagePublishedAt,
+      registries,
+    } = currPackage.insight,
+    currProjectInsights = projectInsights[0];
+
+  const contentGridConfig = dependencies.map((e) => ({
     name: e.package.name,
   }));
 
-  const vulnTableData = currPackage.insight.vulnerabilities.map((e) => ({
+  const vulnTableData = vulnerabilities.map((e) => ({
       id: e.id.value,
       summary: e.summary,
       rank: e.aliases[0].value,
@@ -92,11 +111,10 @@ export default function PackageDetails(props) {
       },
     ];
 
-  const polarChartData =
-      currPackage.insight.projectInsights[0].scorecard.checks.map((e) => ({
-        name: e.name,
-        score: e.score ?? 0,
-      })),
+  const polarChartData = currProjectInsights.scorecard.checks.map((e) => ({
+      name: e.name,
+      score: e.score ?? 0,
+    })),
     polarChartConfig = {
       desktop: {
         label: "Score",
@@ -106,8 +124,7 @@ export default function PackageDetails(props) {
 
   polarChartData.sort((a, b) => b.score - a.score);
 
-  const currProjectInsights = currPackage.insight.projectInsights[0],
-    iconSize = "40",
+  const iconSize = "40",
     iconColor = "black",
     scorecardStatsConfig = [
       {
@@ -126,6 +143,10 @@ export default function PackageDetails(props) {
         tooltipTitle: "Github Open Issues",
       },
     ];
+
+  const formattedPublishedDate = new Date(packagePublishedAt).toDateString();
+
+  const projDetailsIconSize = "30";
 
   return (
     <div
@@ -164,6 +185,30 @@ export default function PackageDetails(props) {
         polarChartConfig={polarChartConfig}
         axisDataKey="name"
         radarDataKey="score"
+      />
+
+      <SectionSeparator />
+
+      {/* #3. Package Details */}
+      <SectionHeader>Package Details</SectionHeader>
+      <IconCard
+        icon={<Scale size={projDetailsIconSize} />}
+        message={licenses.licenses[0].licenseId}
+        tooltipTitle="License"
+      />
+      <IconCard
+        icon={<BookPlus size={projDetailsIconSize} />}
+        message={formattedPublishedDate}
+        tooltipTitle="Published Date"
+      />
+      <IconCard
+        icon={<ClipboardList size={projDetailsIconSize} />}
+        message={
+          <Link href={registries[0]} target="_blank">
+            {registries[0]}
+          </Link>
+        }
+        tooltipTitle="Registry"
       />
 
       <SectionSeparator />
