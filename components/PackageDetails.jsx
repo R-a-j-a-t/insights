@@ -5,14 +5,17 @@ import { useParams } from "next/navigation";
 
 import { Separator } from "./ui/separator";
 
-import ContentGrid from "@/components/ContentGrid";
+import ContentGrid from "./ContentGrid";
 import BackButton from "./BackButton";
 import SummaryTable from "./SummaryTable";
+import Scorecard from "./Scorecard";
+
+import { CircleDot, GitFork, Star } from "lucide-react";
 
 // Local Helper Components
-const SectionSeparator = () => <Separator className="h-2 mt-4 bg-blue-600" />;
+const SectionSeparator = () => <Separator className="h-1 my-2 bg-blue-600" />;
 const SectionHeader = ({ children }) => (
-  <h2 className="my-1 underline">{children}</h2>
+  <h2 className="my-4 text-2xl underline">{children}</h2>
 );
 
 export default function PackageDetails(props) {
@@ -51,7 +54,7 @@ export default function PackageDetails(props) {
       severity: e.severities[0].risk,
       publishDate: e.publishedAt,
     })),
-    vlunTableCols = [
+    vulnTableCols = [
       {
         accessorKey: "serialNum",
         header: "Sl. No",
@@ -89,6 +92,41 @@ export default function PackageDetails(props) {
       },
     ];
 
+  const polarChartData =
+      currPackage.insight.projectInsights[0].scorecard.checks.map((e) => ({
+        name: e.name,
+        score: e.score ?? 0,
+      })),
+    polarChartConfig = {
+      desktop: {
+        label: "Score",
+        color: "#2563eb",
+      },
+    };
+
+  polarChartData.sort((a, b) => b.score - a.score);
+
+  const currProjectInsights = currPackage.insight.projectInsights[0],
+    iconSize = "40",
+    iconColor = "black",
+    scorecardStatsConfig = [
+      {
+        icon: <GitFork size={iconSize} color={iconColor} />,
+        message: currProjectInsights.forks,
+        tooltipTitle: "Github Forks",
+      },
+      {
+        icon: <Star size={iconSize} color={iconColor} />,
+        message: currProjectInsights.stars,
+        tooltipTitle: "Github Stars",
+      },
+      {
+        icon: <CircleDot size={iconSize} color={iconColor} />,
+        message: currProjectInsights.issues.open,
+        tooltipTitle: "Github Open Issues",
+      },
+    ];
+
   return (
     <div
       className={`flex flex-col gap-2 ${
@@ -112,13 +150,24 @@ export default function PackageDetails(props) {
       <SectionHeader>Vulnerability Table</SectionHeader>
       <SummaryTable
         data={vulnTableData}
-        columns={vlunTableCols}
+        columns={vulnTableCols}
         styleTableClass="vulnerability-table"
       />
 
       <SectionSeparator />
 
-      {/* #3. Next Section */}
+      {/* #3. Scorecard */}
+      <SectionHeader>Scorecard</SectionHeader>
+      <Scorecard
+        cardsConfig={scorecardStatsConfig}
+        polarChartData={polarChartData}
+        polarChartConfig={polarChartConfig}
+        axisDataKey="name"
+        radarDataKey="score"
+      />
+
+      <SectionSeparator />
+
       <BackButton />
     </div>
   );
