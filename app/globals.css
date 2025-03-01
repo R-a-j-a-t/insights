@@ -72,3 +72,42 @@
   text-align: center;
   padding: 0.5rem;
 }
+
+.severity-high {
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 0.75rem;
+  color: oklch(0.396 0.141 25.723); /* red-900 */
+  background-color: oklch(0.704 0.191 22.216); /* red-400 */
+  border: 2px solid oklch(0.577 0.245 27.325); /* red-600 */
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.severity-medium {
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 0.75rem;
+  color: oklch(0.408 0.153 2.432); /* pink-900 */
+  background-color: oklch(0.823 0.12 346.018); /* pink-400 */
+  border: 2px solid oklch(0.592 0.249 0.584); /* pink-600 */
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.severity-low {
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 0.75rem;
+  color: oklch(0.421 0.095 57.708); /* yellow-900 */
+  background-color: oklch(0.852 0.199 91.936); /* yellow-400 */
+  border: 2px solid oklch(0.681 0.162 75.834); /* yellow-600 */
+  border-radius: 8px;
+  padding: 2px;
+}
+
+table.vulnerability-table {
+  thead {
+    background-color: white;
+  }
+}
